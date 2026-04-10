@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CESAROPS Wayfinder v2</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>⚓ CESAROPS WAYFINDER</h1>
+    <p class="tagline">Find your start. Finish your work. No overwhelm.</p>
+    <div class="hdr-right">
+      <div class="view-toggle" role="group" aria-label="View mode">
+        <button id="viewBoard" class="vtbtn active">📋 Board</button>
+        <button id="viewFlow"  class="vtbtn">🔀 Flow</button>
+      </div>
+      <button id="settingsBtn">⚙️ Settings & Sidecar</button>
+    </div>
+  </header>
+
+  <main id="board">
+    <section class="category" data-color="red">
+      <div class="cat-header">
+        <h2 contenteditable="true" data-default="🔴 Do Now">🔴 Do Now</h2>
+        <span class="limit-badge">Max 3</span>
+      </div>
+      <ul class="task-list" data-limit="3"></ul>
+      <button class="add-btn" data-target="red">+ Add Task</button>
+    </section>
+
+    <section class="category" data-color="yellow">
+      <div class="cat-header">
+        <h2 contenteditable="true" data-default="🟡 Next Up">🟡 Next Up</h2>
+      </div>
+      <ul class="task-list"></ul>
+      <button class="add-btn" data-target="yellow">+ Add Task</button>
+    </section>
+
+    <section class="category" data-color="orange">
+      <div class="cat-header">
+        <h2 contenteditable="true" data-default="🟠 How-To (Reference)">🟠 How-To (Reference)</h2>
+      </div>
+      <ul class="task-list"></ul>
+      <button class="add-btn" data-target="orange">+ Add Resource</button>
+    </section>
+
+    <section class="category" data-color="green">
+      <div class="cat-header">
+        <h2 contenteditable="true" data-default="🟢 Done / Archive">🟢 Done / Archive</h2>
+      </div>
+      <ul class="task-list"></ul>
+    </section>
+  </main>
+
+  <!-- FLOW VIEW -->
+  <div id="flow-outer" class="hidden">
+    <p class="flow-hint">Drag the <strong>●</strong> port on a <span style="color:#ef4444">Do Now</span> task to a <span style="color:#f97316">Reference</span> item to link them. Hover a line and click <strong>×</strong> to unlink.</p>
+    <div id="flow-canvas">
+      <div id="flow-nodes"></div>
+      <svg id="flow-svg"></svg>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT PANEL -->
+  <aside id="clippy-panel" class="hidden">
+    <div class="clippy-header">
+      <h3>🤖 AI Assistant</h3>
+      <span id="ai-status-badge" class="ai-badge">…</span>
+      <select id="attitude-select">
+        <option value="abliterated">🔥 Mr. Clippy (Honest/Direct)</option>
+        <option value="standard">😐 Standard (Balanced)</option>
+        <option value="supportive">🌟 Supportive (Gentle)</option>
+      </select>
+      <button id="closeClippy">✕</button>
+    </div>
+    <div id="chat-log"></div>
+    <form id="chat-form">
+      <input type="text" id="chat-input" placeholder="Ask for a hint, explain a bug, or check your work..." required>
+      <button type="submit">Send</button>
+    </form>
+  </aside>
+  <button id="openClippy">💬 Ask Clippy</button>
+
+  <!-- SETTINGS / SIDECAR MODAL -->
+  <dialog id="settings-modal">
+    <h2>🧠 Sidecar Memory & Settings</h2>
+
+    <h3 class="settings-section-title">🔌 AI Backend</h3>
+    <div class="settings-row">
+      <label for="ai-backend-select">Backend</label>
+      <select id="ai-backend-select">
+        <option value="github">🐙 GitHub Models (free, needs token)</option>
+        <option value="kobold">🖥️ KoboldCPP (local — teacher / school server)</option>
+      </select>
+    </div>
+
+    <div id="github-settings">
+      <div class="settings-row">
+        <label for="github-token-input">GitHub PAT</label>
+        <input type="password" id="github-token-input" placeholder="github_pat_..." autocomplete="off">
+      </div>
+      <p class="settings-hint">Get a free token at <strong>github.com/settings/tokens</strong> — no special scopes needed.</p>
+      <div class="settings-row">
+        <label for="github-model-select">Model</label>
+        <select id="github-model-select">
+          <option value="gpt-4o-mini">GPT-4o Mini (fast)</option>
+          <option value="gpt-4o">GPT-4o (powerful)</option>
+          <option value="meta-llama-3-8b-instruct">Llama 3 8B</option>
+          <option value="Phi-3-mini-128k-instruct">Phi-3 Mini (lightweight)</option>
+          <option value="Phi-3.5-mini-instruct">Phi-3.5 Mini (lightweight+)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="kobold-settings" class="hidden">
+      <div class="settings-row">
+        <label for="kobold-url-input">KoboldCPP URL</label>
+        <input type="text" id="kobold-url-input" placeholder="http://localhost:5001">
+      </div>
+      <p class="settings-hint">For a shared school server use its IP, e.g. <strong>http://192.168.1.50:5001</strong></p>
+    </div>
+
+    <h3 class="settings-section-title">📌 Anchored Rules (Sidecar)</h3>
+    <p>Rules added here survive every chat. The AI will <em>always</em> see them.</p>
+    <textarea id="sidecar-input" placeholder="[ANCHOR] Example: Always check syntax before running. Keep responses under 3 lines."></textarea>
+    <div class="settings-actions">
+      <button id="save-sidecar">💾 Save</button>
+      <button id="clear-sidecar">🗑️ Clear Rules</button>
+      <button id="close-settings">Close</button>
+    </div>
+    <div id="sidecar-status"></div>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

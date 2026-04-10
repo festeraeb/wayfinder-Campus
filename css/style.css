@@ -1,0 +1,172 @@
+:root {
+  --bg: #0f172a; --text: #e2e8f0; --card: #1e293b; --border: #334155;
+  --red: #ef4444; --yellow: #eab308; --orange: #f97316; --green: #22c55e;
+  --accent: #3b82f6; --font: system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; padding: 1rem; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+h1 { font-size: 1.5rem; color: var(--accent); }
+.tagline { color: #94a3b8; font-size: 0.9rem; }
+button, select, input { font-family: inherit; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; }
+button:hover { background: var(--border); }
+
+#board { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.category { background: var(--card); padding: 1rem; border-radius: 0.75rem; border-top: 4px solid transparent; }
+.category[data-color="red"] { border-color: var(--red); }
+.category[data-color="yellow"] { border-color: var(--yellow); }
+.category[data-color="orange"] { border-color: var(--orange); }
+.category[data-color="green"] { border-color: var(--green); }
+.cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+h2 { font-size: 1.1rem; outline: none; border-bottom: 1px dashed transparent; }
+h2:focus { border-bottom-color: var(--accent); }
+.limit-badge { background: var(--red); color: white; padding: 0.2rem 0.5rem; border-radius: 99px; font-size: 0.7rem; }
+.task-list { list-style: none; min-height: 3rem; }
+.task-item { background: rgba(255,255,255,0.05); padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+.task-item.done { text-decoration: line-through; opacity: 0.6; }
+.task-actions button { padding: 0.2rem 0.5rem; margin-left: 0.25rem; font-size: 0.8rem; }
+.add-btn { width: 100%; margin-top: 0.5rem; border: 1px dashed var(--border); background: transparent; }
+
+/* AI Panel */
+#clippy-panel { position: fixed; bottom: 1rem; right: 1rem; width: 320px; background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 50; display: flex; flex-direction: column; max-height: 70vh; }
+.hidden { display: none !important; }
+.clippy-header { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+#chat-log { flex: 1; overflow-y: auto; max-height: 300px; padding: 0.5rem 0; font-size: 0.9rem; border-top: 1px solid var(--border); margin-bottom: 0.5rem; }
+.chat-msg { margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 0.5rem; max-width: 90%; }
+.chat-msg.user { background: var(--accent); align-self: flex-end; margin-left: auto; }
+.chat-msg.ai { background: rgba(255,255,255,0.1); border-left: 3px solid var(--orange); }
+#chat-form { display: flex; gap: 0.5rem; }
+#chat-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.5rem; border-radius: 0.5rem; }
+#openClippy { position: fixed; bottom: 1rem; right: 1rem; background: var(--accent); border: none; padding: 0.75rem 1rem; border-radius: 50px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); z-index: 40; }
+
+/* Modal */
+dialog { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 1.5rem; border-radius: 0.75rem; max-width: 520px; width: 90%; }
+dialog::backdrop { background: rgba(0,0,0,0.7); }
+textarea { width: 100%; height: 120px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.75rem; border-radius: 0.5rem; margin: 1rem 0; font-family: monospace; }
+.settings-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+#sidecar-status { margin-top: 0.5rem; font-size: 0.85rem; color: var(--green); }
+.settings-section-title { font-size: 0.95rem; color: var(--accent); margin: 1rem 0 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
+.settings-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+.settings-row label { min-width: 90px; font-size: 0.85rem; color: #94a3b8; }
+.settings-row select, .settings-row input[type="text"], .settings-row input[type="password"] { flex: 1; font-size: 0.85rem; }
+.settings-hint { font-size: 0.78rem; color: #64748b; margin: 0.25rem 0 0.75rem 0; padding-left: 0.25rem; }
+.ai-badge { font-size: 0.72rem; background: rgba(255,255,255,0.08); border: 1px solid var(--border); border-radius: 99px; padding: 0.15rem 0.5rem; white-space: nowrap; color: #94a3b8; }
+.chat-msg.error { border-left-color: var(--red); color: #fca5a5; }
+
+/* ── View toggle ───────────────────────────────────────────────────────────── */
+.hdr-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.view-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 0.5rem; overflow: hidden; }
+.vtbtn { border: none; border-radius: 0; padding: 0.4rem 0.85rem; font-size: 0.85rem; background: var(--card); color: #94a3b8; }
+.vtbtn:hover { background: var(--border); color: var(--text); }
+.vtbtn.active { background: var(--accent); color: #fff; }
+
+/* ── Flow canvas ───────────────────────────────────────────────────────────── */
+#flow-outer { margin-bottom: 2rem; }
+.flow-hint { font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; }
+
+/* Dotted grid background, like Node-RED */
+#flow-canvas {
+  position: relative;
+  overflow: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background-color: #080f1e;
+  background-image: radial-gradient(#1e2d45 1px, transparent 1px);
+  background-size: 22px 22px;
+  min-height: 220px;
+}
+
+/* Layer 1: SVG (connections) — absolute, below nodes */
+#flow-svg {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 1;
+  pointer-events: none; /* only paths opt in via pointer-events attr */
+  overflow: visible;
+}
+
+/* Layer 2: HTML nodes — absolute, above SVG */
+#flow-nodes {
+  position: relative;
+  z-index: 2;
+  pointer-events: none; /* children opt in */
+}
+
+/* Individual node card */
+.fn {
+  position: absolute;
+  background: var(--card);
+  border-left: 4px solid #3b82f6;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  user-select: none;
+  pointer-events: auto;
+}
+.fn-label {
+  flex: 1;
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.fn-col-hdr {
+  position: absolute;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+.fn-empty {
+  position: absolute;
+  font-size: 0.78rem;
+  color: #475569;
+  font-style: italic;
+  pointer-events: none;
+}
+
+/* Port dots */
+.fn-port {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 2.5px solid #475569;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: crosshair;
+  transition: background 0.15s, border-color 0.15s;
+  pointer-events: auto;
+}
+.fn-port:hover { background: var(--accent); border-color: var(--accent); }
+.fn-in  { left:  -6px; }
+.fn-out { right: -6px; }
+
+/* ── SVG connection elements ─────────────────────────────────────────────── */
+/* Visual bezier */
+.fc { fill: none; stroke: var(--accent); stroke-width: 2; stroke-opacity: 0.75; pointer-events: none; }
+
+/* Draft line while dragging */
+.fc-draft { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 3; pointer-events: none; }
+
+/* Wide transparent hit area */
+.fc-hit { fill: none; stroke: #fff; stroke-width: 16; stroke-opacity: 0; pointer-events: stroke; cursor: pointer; }
+
+/* Midpoint × delete button */
+.fc-del { cursor: pointer; opacity: 0; transition: opacity 0.15s; }
+.fc-del circle { fill: #0f172a; stroke: #ef4444; stroke-width: 1.5; }
+.fc-del text { fill: #ef4444; font-size: 13px; font-weight: 700; }
+
+/* Show delete btn when hovering the connection group */
+.fc-group:hover .fc-del { opacity: 1; }
+/* fc-group needs pointer-events so :hover fires on SVG <g> */
+.fc-group { pointer-events: auto; }
+
+@media (max-width: 600px) {
+  #board { grid-template-columns: 1fr; }
+  #clippy-panel { width: 95%; left: 2.5%; bottom: 0.5rem; }
+}
