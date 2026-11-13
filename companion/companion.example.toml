@@ -1,0 +1,48 @@
+# Wayfinder Companion settings. Copy to companion.toml and edit.
+# Run with:  wayfinder-companion companion.toml
+
+# 127.0.0.1 = this computer only (use this behind an HTTPS proxy or tunnel).
+# 0.0.0.0   = everyone on the network (use this on a teacher's desktop).
+listen = "127.0.0.1:8787"
+
+# Shown to students before they turn the helper on, so they know who runs it.
+operator = "Your name or school"
+
+# "personal" (your own server), "teacher" (a classroom desktop) or "school" (a district server).
+mode = "personal"
+
+# Class code students must type. Leave empty only on a private network.
+join_code = "change-me"
+
+# Web addresses allowed to call this server. Use your published page's address, not "*",
+# when the server is on the internet. Example: ["https://yourname.github.io"]
+allowed_origins = ["*"]
+
+# Teacher mode: serve the student page from this folder so page and helper share one address.
+# serve_app = ".."
+
+# Set true only behind a reverse proxy (Caddy, nginx, Cloudflare Tunnel).
+trust_proxy = false
+
+[upstream]
+# Any OpenAI-compatible server. Lemonade: http://127.0.0.1:13306/v1   koboldcpp: http://127.0.0.1:5001/v1
+# Use "mock" to test the page with canned answers and no model.
+url = "http://127.0.0.1:13306/v1"
+model = "qwen2.5-coder-1.5b-instruct-q4_k_m"
+api_key = ""
+
+[limits]
+max_concurrent = 1            # questions answered at once
+max_waiting = 30              # questions allowed to wait in line
+per_address_per_minute = 60   # a whole school can share one address, so keep this roomy
+max_message_chars = 2000
+max_reply_tokens = 300
+request_timeout_secs = 120
+
+[tutor]
+attitudes = ["supportive", "standard", "direct"]
+default_attitude = "supportive"
+allow_student_rules = true
+rules = [
+  "Give hints before answers.",
+]

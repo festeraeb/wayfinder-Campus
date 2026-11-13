@@ -170,3 +170,9 @@ textarea { width: 100%; height: 120px; background: var(--bg); border: 1px solid 
   #board { grid-template-columns: 1fr; }
   #clippy-panel { width: 95%; left: 2.5%; bottom: 0.5rem; }
 }
+
+/* AI helper opt-in */
+.consent-row { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.85rem; margin: 0.5rem 0 0.75rem; line-height: 1.35; }
+.consent-row input { margin-top: 0.2rem; }
+#companion-info.ok { color: #86efac; }
+#companion-info.bad { color: #fca5a5; }

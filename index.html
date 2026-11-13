@@ -67,11 +67,7 @@
     <div class="clippy-header">
       <h3>🤖 AI Assistant</h3>
       <span id="ai-status-badge" class="ai-badge">…</span>
-      <select id="attitude-select">
-        <option value="abliterated">🔥 Mr. Clippy (Honest/Direct)</option>
-        <option value="standard">😐 Standard (Balanced)</option>
-        <option value="supportive">🌟 Supportive (Gentle)</option>
-      </select>
+      <select id="attitude-select" aria-label="Helper personality"></select>
       <button id="closeClippy">✕</button>
     </div>
     <div id="chat-log"></div>
@@ -80,22 +76,47 @@
       <button type="submit">Send</button>
     </form>
   </aside>
-  <button id="openClippy">💬 Ask Clippy</button>
+  <button id="openClippy" class="hidden">💬 Ask Clippy</button>
 
   <!-- SETTINGS / SIDECAR MODAL -->
   <dialog id="settings-modal">
     <h2>🧠 Sidecar Memory & Settings</h2>
 
-    <h3 class="settings-section-title">🔌 AI Backend</h3>
+    <h3 class="settings-section-title">🤖 AI Helper (optional)</h3>
     <div class="settings-row">
-      <label for="ai-backend-select">Backend</label>
+      <label for="ai-backend-select">Helper</label>
       <select id="ai-backend-select">
-        <option value="github">🐙 GitHub Models (free, needs token)</option>
-        <option value="kobold">🖥️ KoboldCPP (local — teacher / school server)</option>
+        <option value="off">Off — the board works without it</option>
+        <option value="companion">🧭 Wayfinder helper server</option>
+        <option value="github">Advanced: GitHub Models (your own token)</option>
+        <option value="kobold">Advanced: KoboldCPP on this computer</option>
       </select>
     </div>
 
-    <div id="github-settings">
+    <div id="off-settings">
+      <p class="settings-hint">Your board is saved only on this device. Nothing is sent anywhere.</p>
+    </div>
+
+    <div id="companion-settings" class="hidden">
+      <div class="settings-row">
+        <label for="companion-url-input">Address</label>
+        <input type="text" id="companion-url-input" placeholder="https://… (from your teacher or the site owner)" autocomplete="off">
+      </div>
+      <div class="settings-row">
+        <label for="companion-code-input">Class code</label>
+        <input type="text" id="companion-code-input" placeholder="only if you were given one" autocomplete="off">
+      </div>
+      <div class="settings-row">
+        <button type="button" id="companion-check">🔎 Check connection</button>
+      </div>
+      <p id="companion-info" class="settings-hint" role="status"></p>
+      <label id="companion-consent-row" class="consent-row hidden">
+        <input type="checkbox" id="companion-consent">
+        <span>I understand that questions I type to the helper are sent to this server to be answered.</span>
+      </label>
+    </div>
+
+    <div id="github-settings" class="hidden">
       <div class="settings-row">
         <label for="github-token-input">GitHub PAT</label>
         <input type="password" id="github-token-input" placeholder="github_pat_..." autocomplete="off">
@@ -118,7 +139,7 @@
         <label for="kobold-url-input">KoboldCPP URL</label>
         <input type="text" id="kobold-url-input" placeholder="http://localhost:5001">
       </div>
-      <p class="settings-hint">For a shared school server use its IP, e.g. <strong>http://192.168.1.50:5001</strong></p>
+      <p class="settings-hint">Only works when KoboldCPP runs on this same computer. For a classroom or school server, use the Wayfinder helper option instead.</p>
     </div>
 
     <h3 class="settings-section-title">📌 Anchored Rules (Sidecar)</h3>
